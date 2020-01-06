@@ -16,17 +16,15 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	private static final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false";
 	private static String user = "student";
 	private static String pass = "student";
-	
+
 	static {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			
-		}catch (ClassNotFoundException e) {
+
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-
-	
 
 	@Override
 	public Film findFilmById(int filmId) {
@@ -60,32 +58,66 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	}
 
 	@Override
-	public Actor findActorById(int actorId) throws SQLException {
-		Actor actor = null;
-		//try {
-			Connection conn = DriverManager.getConnection(URL, user, pass);
-			String sql = "SELECT id, first_name, last_name FROM actor WHERE id = ?";
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			stmt.setInt(1, actorId);
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				actor = new Actor();
-				actor.setId(rs.getInt("id"));
-				actor.setFirst_name(rs.getString("first_name"));
-				actor.setLast_name(rs.getString("last_name"));
-			}
+	public List<Film> findFilmByKeyword(String keyword) {
+		List<Film> films = new ArrayList<>();
 
+		try {
+			Connection conn = DriverManager.getConnection(URL, user, pass);
+//			String sql = "SELECT film.id, film.title, film.description, film.release_year, film.rental_duration, film.language_id, film.rental_rate, film.length, film.replacement_cost, film.rating, film.special_features "
+//					+ " FROM film "  + " WHERE film.id = ?" ;
+			String sql = "SELECT * from film where film_id =?";
+//					+ " FROM film "  + " WHERE film.id = ?" ;
+			
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, keyword);
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM film WHERE title LIKE '%" + keyword + "%' OR description LIKE '%" + keyword + "%'");
+
+			if (rs.next()) {
+				Film film = new Film(rs.getInt("film.id"), rs.getString("film.title"), rs.getString("film.description"),
+						rs.getInt("film.release_year"), rs.getInt("film.language_id"),
+						rs.getInt("film.rental_duration"), rs.getDouble("film.rental_rate"), rs.getInt("film.length"),
+						rs.getDouble("film.replacement_cost"), rs.getString("film.rating"),
+						rs.getString("film.special_features"));
+				film.setActors(findActorsByFilmId(film.getId()));
+				films.add(film);
+
+			}
 			rs.close();
 			stmt.close();
 			conn.close();
-	//}
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		return actor;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return films;
 	}
 
+	@Override
+	public Actor findActorById(int actorId) throws SQLException {
+		Actor actor = null;
+//try {
+		Connection conn = DriverManager.getConnection(URL, user, pass);
+		String sql = "SELECT id, first_name, last_name FROM actor WHERE id = ?";
+		PreparedStatement stmt = conn.prepareStatement(sql);
+		stmt.setInt(1, actorId);
+		ResultSet rs = stmt.executeQuery();
+		if (rs.next()) {
+			actor = new Actor();
+			actor.setId(rs.getInt("id"));
+			actor.setFirst_name(rs.getString("first_name"));
+			actor.setLast_name(rs.getString("last_name"));
+		}
+
+		rs.close();
+		stmt.close();
+		conn.close();
+//}
+//} catch (SQLException e) {
+//// TODO Auto-generated catch block
+//e.printStackTrace();
+//}
+		return actor;
+	}
 
 	@Override
 	public List<Actor> findActorsByFilmId(int filmId) {
@@ -113,5 +145,10 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 		return actors;
 	}
+
+//	@Override
+//	public List<Film> findFilmByKeyword(String keyword) {
+//		// TODO Auto-generated method stub
+//		return null;
 
 }
