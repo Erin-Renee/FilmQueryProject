@@ -29,6 +29,9 @@ when a film is displayed, the actors, title, year, rating, and discriotion is di
 
 MySQL
 Select statements
+Join conditions
+DatabaseAccessorObject
+
 
 
 
@@ -43,3 +46,7 @@ Macbook Pro
 
 
 #### Lessons Learned
+
+While completing the Film Query application, I learned how to retrieve data from a table using an SQL statement. I also learned how to join information from multiple tables using a join condition.
+I think that really understanding how to formulate the SQL was a challenge for me. Through practice and repetition, it is becoming easier to formulate.
+The second challenge I came across was really understanding how object relational mapping really works. I understood it in theory, but applying the knowledge to actual code really helped me understand how the data is retrieved.  

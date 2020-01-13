@@ -15,15 +15,7 @@ public class Film {
 	private String rating;
 	private String special_features;
 	private List<Actor> actors;
-	private List<Film> films;
-	
-	public List<Film> getFilms() {
-		return films;
-	}
-
-	public void setFilms(List<Film> films) {
-		this.films = films;
-	}
+	private String language;
 
 	public List<Actor> getActors() {
 		return actors;
@@ -34,11 +26,12 @@ public class Film {
 	}
 
 	public Film() {
-		
+
 	}
 
 	public Film(int id, String title, String description, int release_year, int language_id, int rental_duration,
-			double rental_rate, int length, double replacement_cost, String rating, String special_features) {
+			double rental_rate, int length, double replacement_cost, String rating, String special_features,
+			String language) {
 		super();
 		this.id = id;
 		this.title = title;
@@ -51,10 +44,19 @@ public class Film {
 		this.replacement_cost = replacement_cost;
 		this.rating = rating;
 		this.special_features = special_features;
+		this.language = language;
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public void setId(int id) {
@@ -210,11 +212,10 @@ public class Film {
 
 	@Override
 	public String toString() {
-		return "Film [id=" + id + ", title=" + title + ", description=" + description + ", release_year=" + release_year
-				+ ", language_id=" + language_id + ", rental_duration=" + rental_duration + ", rental_rate="
-				+ rental_rate + ", length=" + length + ", replacement_cost=" + replacement_cost + ", rating=" + rating
-				+ ", special_features=" + special_features + ", actors=" + actors + "]";
+		return "\nFilm [ID = " + id + ", Title = " + title + ", Description =  " + description + ", Release Year = " + release_year
+				+ ", Language Id = " + language_id + ", Rental Duration = " + rental_duration + ", Rental Rate = "
+				+ rental_rate + ", Length=" + length + ", Replacement Cost = " + replacement_cost + ", Rating=" + rating
+				+ ", Special Features = " + special_features + ",\n Actors = " + actors + ", " + "\n Language = " + language;
 	}
-	
-	
+
 }

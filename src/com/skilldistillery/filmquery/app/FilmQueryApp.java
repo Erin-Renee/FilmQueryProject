@@ -19,11 +19,6 @@ public class FilmQueryApp {
 		app.launch();
 	}
 
-//	private void test() throws SQLException {
-//		Film film = db.findFilmById(1);
-//		System.out.println(film);
-//	}
-
 	private void launch() {
 		Scanner input = new Scanner(System.in);
 		startUserInterface(input);
@@ -78,27 +73,33 @@ public class FilmQueryApp {
 
 	public void filmById(Scanner input) {
 		int idfilm = 0;
-		do {
+		
 			System.out.println("Please enter film ID: ");
 			idfilm = input.nextInt();
-			Film film = db.findFilmById(idfilm);
-			System.out.println(film);
-		} while (idfilm == 0);
+			if (idfilm != 0) {
+				Film film = db.findFilmById(idfilm);
+				System.out.println(film);
+				// System.out.println("message");
+			}else {
+				System.out.println("film not found");	
+		} 
 	}
 
 	public void filmByKeyword(Scanner input) {
 		String userKeyword;
-		do {
-			System.out.println("Please enter search keyword: ");
-			userKeyword = input.next();
-			List<Film> films = db.findFilmByKeyword(userKeyword);
-			films.forEach(film -> {
-				System.out.println("\nTitle: " + film.getTitle() + "\nRelease Year: " + film.getRelease_year());
-			});
-		} while (userKeyword == null) ;
-			if (userKeyword.equalsIgnoreCase(null)) {
-				System.out.println("film not found");
-			}
-		
+		System.out.println("Please enter search keyword: ");
+		userKeyword = input.next();
+		List<Film> films = db.findFilmByKeyword(userKeyword);
+		films.forEach(film -> {
+			System.out.println("\nTitle: " + film.getTitle() + "\nRelease Year: " + film.getRelease_year()
+					+ "\nActors: " + film.getActors() + "\nDescription: " + film.getDescription() + "\nRating:  "
+					+ film.getRating() + "\nLanguage: " + film.getLanguage());
+		});
+
+		if (films.size() == 0) {
+			System.out.println("film not found");
+		} else {
+
+		}
 	}
 }

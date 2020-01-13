@@ -32,9 +32,9 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 		try {
 			Connection conn = DriverManager.getConnection(URL, user, pass);
-			String sql = "SELECT id, title, description, release_year, language_id, rental_duration, ";
-			sql += " rental_rate, length, replacement_cost, rating, special_features "
-					+ " FROM film JOIN film_actor ON film.id = film_actor.film_id " + " WHERE actor_id = ?";
+			String sql = "SELECT film.id, film.title, film.description, film.release_year, film.language_id, film.rental_duration, language.name, "
+					+ " rental_rate, length, replacement_cost, rating, special_features "
+					+ " FROM film JOIN language ON film.language_id= language.id " + " WHERE film.id = ?";
 
 			PreparedStatement stmt = conn.prepareStatement(sql);
 			stmt.setInt(1, filmId);
@@ -44,7 +44,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 						rs.getInt("film.release_year"), rs.getInt("film.language_id"),
 						rs.getInt("film.rental_duration"), rs.getDouble("film.rental_rate"), rs.getInt("film.length"),
 						rs.getDouble("film.replacement_cost"), rs.getString("film.rating"),
-						rs.getString("film.special_features"));
+						rs.getString("film.special_features"), rs.getString("language.name"));
 				film.setActors(findActorsByFilmId(filmId));
 
 			}
@@ -63,22 +63,21 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 
 		try {
 			Connection conn = DriverManager.getConnection(URL, user, pass);
-//			String sql = "SELECT film.id, film.title, film.description, film.release_year, film.rental_duration, film.language_id, film.rental_rate, film.length, film.replacement_cost, film.rating, film.special_features "
-//					+ " FROM film "  + " WHERE film.id = ?" ;
-			String sql = "SELECT * from film where film_id =?";
-//					+ " FROM film "  + " WHERE film.id = ?" ;
-			
-			PreparedStatement stmt = conn.prepareStatement(sql);
-			stmt.setString(1, keyword);
-			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM film WHERE title LIKE '%" + keyword + "%' OR description LIKE '%" + keyword + "%'");
+			String sql = "SELECT film.id, film.title, film.description, film.release_year, film.language_id, film.rental_duration, film.rental_rate, film.length, film.replacement_cost, film.rating, film.special_features, language.name "
+					+ " FROM film JOIN language ON film.language_id = language.id"
+					+ " WHERE title LIKE ? OR description LIKE ?";
 
-			if (rs.next()) {
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			stmt.setString(1, "%" + keyword + "%");
+			stmt.setString(2, "%" + keyword + "%");
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
 				Film film = new Film(rs.getInt("film.id"), rs.getString("film.title"), rs.getString("film.description"),
 						rs.getInt("film.release_year"), rs.getInt("film.language_id"),
 						rs.getInt("film.rental_duration"), rs.getDouble("film.rental_rate"), rs.getInt("film.length"),
 						rs.getDouble("film.replacement_cost"), rs.getString("film.rating"),
-						rs.getString("film.special_features"));
+						rs.getString("film.special_features"), rs.getString("language.name"));
 				film.setActors(findActorsByFilmId(film.getId()));
 				films.add(film);
 
@@ -95,7 +94,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public Actor findActorById(int actorId) throws SQLException {
 		Actor actor = null;
-//try {
 		Connection conn = DriverManager.getConnection(URL, user, pass);
 		String sql = "SELECT id, first_name, last_name FROM actor WHERE id = ?";
 		PreparedStatement stmt = conn.prepareStatement(sql);
@@ -111,11 +109,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		rs.close();
 		stmt.close();
 		conn.close();
-//}
-//} catch (SQLException e) {
-//// TODO Auto-generated catch block
-//e.printStackTrace();
-//}
+
 		return actor;
 	}
 
@@ -146,9 +140,6 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		return actors;
 	}
 
-//	@Override
-//	public List<Film> findFilmByKeyword(String keyword) {
-//		// TODO Auto-generated method stub
-//		return null;
-
 }
+
+//When a film is displayed, the list of actors in its cast is displayed along with the title, year, rating, and description
